@@ -82,7 +82,7 @@ static int serial_getinfo(int fd)
 		len = read(fd, &rsp, 1);
 		if (len != 1)
 			return -1;
-		if (i && !(i % 8))
+		if (i && !(i % 6))
 			printf("\n");
 		printf(" 0x%02x", rsp);
 	}
