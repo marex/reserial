@@ -60,6 +60,26 @@ static int serial_set(int fd)
         return 0;
 }
 
+static int serial_open(const char *port, int *rfd)
+{
+	int fd, ret;
+
+	fd = open(port, O_RDWR | O_NOCTTY | O_SYNC);
+	if (fd < 0) {
+                printf("%s[%i] ret=%i\n", __func__, __LINE__, fd);
+		return fd;
+	}
+
+	ret = serial_set(fd);
+        if (ret) {
+                printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
+                return ret;
+        }
+
+	*rfd = fd;
+	return 0;
+}
+
 static int serial_getinfo(int fd)
 {
 	/* Most likely power consumption info, format unknown */
@@ -198,17 +218,9 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	fd = open(port, O_RDWR | O_NOCTTY | O_SYNC);
-	if (fd < 0) {
-                printf("%s[%i] ret=%i\n", __func__, __LINE__, fd);
-		return 1;
-	}
-
-	ret = serial_set(fd);
-        if (ret) {
-                printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
-                return ret;
-        }
+	ret = serial_open(port, &fd);
+	if (ret < 0)
+		return ret;
 
 	if (mode == MODE_INFO)
 		return serial_getinfo(fd);
