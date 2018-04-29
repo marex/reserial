@@ -165,7 +165,8 @@ static int serial_setsock(int fd, unsigned char sockmask)
 enum opmode {
 	MODE_INFO = 0,
 	MODE_GET,
-	MODE_SET
+	MODE_SET,
+	MODE_TEST,
 };
 
 static void usage(char *name)
@@ -190,6 +191,8 @@ int main(int argc, char *argv[])
 	else if (argc == 3 && !strcmp(argv[1], "-s")) {
 		mode = MODE_SET;
 		val = strtoul(argv[2], NULL, 16) & 0x3f;
+	} else if (argc == 2 && !strcmp(argv[1], "-t")) {
+		mode = MODE_TEST;
 	} else {
 		usage(argv[0]);
 		return 0;
@@ -213,6 +216,17 @@ int main(int argc, char *argv[])
 		return serial_getsock(fd);
 	if (mode == MODE_SET)
 		return serial_setsock(fd, val);
+	if (mode == MODE_TEST) {
+		for (val = 0; val <= 0x3f; val++) {
+			ret = serial_setsock(fd, val);
+			if (ret) {
+		                printf("%s[%i] ret=%i\n", __func__, __LINE__,
+				       ret);
+		                return ret;
+			}
+			sleep(1);
+		}
+	}
 
 	return 0;
 }
