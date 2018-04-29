@@ -145,7 +145,7 @@ static int serial_setsock(int fd, unsigned char sockmask)
 
 	/* Port 5 and 6 are special */
 	msg[4] |= sockmask & 0xf0;
-	msg[5] |= sockmask & 0xf0;
+	msg[5] |= (sockmask + 0x4) & 0xf0;
 
 	ret = write(fd, msg, sizeof(msg));
 	if (ret != sizeof(msg)) {
