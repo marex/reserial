@@ -27,37 +27,37 @@ static const char *port = "/dev/ttyS0";
 
 static int serial_set(int fd)
 {
-        struct termios tty = { 0 };
+	struct termios tty = { 0 };
 	int ret;
 
 	ret = tcgetattr(fd, &tty);
-        if (ret) {
-                printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
-                return ret;
-        }
+	if (ret) {
+		printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
+		return ret;
+	}
 
-        cfsetospeed(&tty, B4800);
-        cfsetispeed(&tty, B4800);
+	cfsetospeed(&tty, B4800);
+	cfsetispeed(&tty, B4800);
 
-        tty.c_cflag &= ~(CSIZE | PARENB | PARODD | CSTOPB | CRTSCTS);
-        tty.c_cflag |= CS8 | CLOCAL | CREAD;
+	tty.c_cflag &= ~(CSIZE | PARENB | PARODD | CSTOPB | CRTSCTS);
+	tty.c_cflag |= CS8 | CLOCAL | CREAD;
 
-        tty.c_iflag &= ~(IGNBRK | IXON | IXOFF | IXANY);
+	tty.c_iflag &= ~(IGNBRK | IXON | IXOFF | IXANY);
 
-        tty.c_lflag = ECHOKE | ECHOCTL;
+	tty.c_lflag = ECHOKE | ECHOCTL;
 
-        tty.c_oflag = ONLCR;
+	tty.c_oflag = ONLCR;
 
-        tty.c_cc[VMIN]  = 0;
-        tty.c_cc[VTIME] = 10;
+	tty.c_cc[VMIN] = 0;
+	tty.c_cc[VTIME] = 10;
 
 	ret = tcsetattr(fd, TCSANOW, &tty);
-        if (ret) {
-                printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
-                return ret;
-        }
+	if (ret) {
+		printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
+		return ret;
+	}
 
-        return 0;
+	return 0;
 }
 
 static int serial_open(const char *port, int *rfd)
@@ -66,15 +66,15 @@ static int serial_open(const char *port, int *rfd)
 
 	fd = open(port, O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd < 0) {
-                printf("%s[%i] ret=%i\n", __func__, __LINE__, fd);
+		printf("%s[%i] ret=%i\n", __func__, __LINE__, fd);
 		return fd;
 	}
 
 	ret = serial_set(fd);
-        if (ret) {
-                printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
-                return ret;
-        }
+	if (ret) {
+		printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
+		return ret;
+	}
 
 	*rfd = fd;
 	return 0;
@@ -93,9 +93,9 @@ static int serial_getinfo(int fd)
 
 	ret = write(fd, msg, sizeof(msg));
 	if (ret != sizeof(msg)) {
-                printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
-                return ret;
-        }
+		printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
+		return ret;
+	}
 
 	printf("rsp:\n");
 	for (i = 0; i < 45; i++) {
@@ -130,9 +130,9 @@ static int serial_getsock(int fd)
 
 	ret = write(fd, msg, sizeof(msg));
 	if (ret != sizeof(msg)) {
-                printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
-                return ret;
-        }
+		printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
+		return ret;
+	}
 
 	printf("rsp:\n");
 	for (i = 0; i < sizeof(msg); i++) {
@@ -169,9 +169,9 @@ static int serial_setsock(int fd, unsigned char sockmask)
 
 	ret = write(fd, msg, sizeof(msg));
 	if (ret != sizeof(msg)) {
-                printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
-                return ret;
-        }
+		printf("%s[%i] ret=%i\n", __func__, __LINE__, ret);
+		return ret;
+	}
 
 	for (i = 0; i < sizeof(msg); i++) {
 		len = read(fd, &rsp, 1);
@@ -232,9 +232,9 @@ int main(int argc, char *argv[])
 		for (val = 0; val <= 0x3f; val++) {
 			ret = serial_setsock(fd, val);
 			if (ret) {
-		                printf("%s[%i] ret=%i\n", __func__, __LINE__,
+				printf("%s[%i] ret=%i\n", __func__, __LINE__,
 				       ret);
-		                return ret;
+				return ret;
 			}
 			sleep(1);
 		}
